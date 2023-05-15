@@ -30,14 +30,28 @@ int main(void)
   int status;             // Estado que devuelve la funci�n wait
   enum status status_res; // Estado procesado por analyze_status()
   int info;		      // Informaci�n procesada por analyze_status()
+  int success;
 
   while (1) // El programa termina cuando se pulsa Control+D dentro de get_command()
   {   		
     printf("COMANDO->");
     fflush(stdout);
     get_command(inputBuffer, MAX_LINE, args, &background); // Obtener el pr�ximo comando
-    if (args[0]==NULL) continue; // Si se introduce un comando vac�o, no hacemos nada
-
+    if (args[0] == NULL) continue; // Si se introduce un comando vac�o, no hacemos nada
+    if (!strcmp(args[0], "cd")) {
+      /*if (args[1] == NULL) {
+        strcpy(args[1],"~"); 
+      } else {*/
+        success = chdir(args[1]);
+        if (success == -1)
+        {
+          printf("El directorio %s no es correcto. El comando %s no se ha ejecutado.\n", args[1], args[0]);
+        }
+      //}
+      continue;
+    }
+    if (!strcmp(args[0], "logout")) exit(0);
+    
     pid_fork = fork();
     if(pid_fork > 0){
       if(background == 0){
